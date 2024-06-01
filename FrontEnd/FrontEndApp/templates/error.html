@@ -1,0 +1,28 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error - Acceso Denegado</title>
+    <link rel="stylesheet" href="{% static 'assets/css/error.css' %}">
+</head>
+
+<body>
+
+    <div class="error-container">
+        <h2>Error - Acceso Denegado</h2>
+        <p>{{ mensaje }}</p>
+        <a href="#" onclick="goBack()">Volver a la página anterior</a>
+    </div>
+
+    <script>
+        function goBack() {
+            window.history.back();
+        }
+    </script>
+
+</body>
+
+</html>

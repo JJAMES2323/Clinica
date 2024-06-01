@@ -1,0 +1,213 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200;0,300;0,400;0,600;0,700;0,800;0,900;1,200;1,300;1,400;1,600;1,700;1,800;1,900&display=swap');
+
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Nunito', sans-serif;
+    text-decoration: none;
+}
+
+:root{
+    --color-esqueleto:#EFF3F5;
+}
+
+header{
+    width: 100%;
+    height: 60px;
+    background: var(--color-esqueleto);
+}
+
+.cover{
+    width: 100%;
+    height: 500px;
+    background: var(--color-esqueleto);
+    margin-top: 20px;
+}
+
+.container__article{
+    max-width: 500px;
+    padding: 0px 20px;
+    margin: auto;
+    margin-top: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.container__article .box__article{
+    width: 20px;
+    height: 250px;
+    background: var(--color-esqueleto);
+    margin: 20x;
+}
+
+
+footer{
+    width: 100%;
+    padding: 100px -10px;
+    background-image: url('../img/background-footer.svg');
+    background-size: cover;
+    
+  
+}
+
+.container__footer{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    max-width: 1300px;
+    margin: auto;
+    margin-top: 150px;
+}
+
+.box__footer{
+    display: flex;
+    flex-direction: column;
+    padding: 60px;
+}
+
+.box__footer .logo img{
+    width: 160px;
+}
+
+.box__footer .terms{
+    max-width: 200px;
+    margin-top: 20px;
+    font-weight: 600;
+    color: #7a7a7a;
+    font-size: 18px;
+}
+
+.box__footer h2{
+    margin-bottom: 50px;
+    color: #343434;
+    font-weight: 700;
+}
+
+.box__footer a{
+    margin-top: 5px;
+    color: #7a7a7a;
+    font-weight: 600;
+}
+
+.box__footer a:hover{
+    opacity: 0.8;
+}
+
+.box__footer a .fab{
+    font-size: 20px;
+}
+
+.box__copyright{
+    max-width: 1200px;
+    margin: auto;
+    text-align: center;
+    padding: 0px 40px;
+}
+
+.box__copyright p{
+    margin-top: 30px;
+    color: #7a7a7a;
+}
+
+.box__copyright hr{
+    border: none;
+    height: 1px;
+    background-color: #7a7a7a;
+}
+
+#rol {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-top: 5px;
+}
+#nmbreMedicamento{
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-top: 5px;
+}
+#nombreProcedimientos{
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-top: 5px;
+}
+#nombreAyuda{
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-top: 5px;
+}
+#frecuenciaProcedimiento{
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-top: 5px;
+}
+#parentezcoContacto{
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-top: 5px;
+}
+
+/* Agrega espacio entre los botones */
+#registroForm button {
+    margin-top: 10px;
+}
+
+#actualizarForm button{
+    margin-top: 10px;
+}
+
+#eliminarForm button{
+    margin-top: 10px;
+}
+
+#consultarForm button{
+    margin-top: 10px;
+}
+/* Estilos para la alerta de éxito */
+.alert-success {
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+    color: #155724;
+}
+
+/* Estilos para la alerta de error */
+.alert-error {
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    color: #721c24;
+}
+
+/* Estilos generales para la alerta */
+.alert {
+    padding: 0.75rem 1.25rem;
+    margin-bottom: 1rem;
+    border: 1px solid transparent;
+    border-radius: 0.25rem;
+}
+/* Estilos para el botón de cerrar en la alerta */
+.close {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: inherit;
+}
+
+.close:hover {
+    color: #007bff; /* Cambia el color al pasar el ratón sobre el botón */
+    text-decoration: none;
+    cursor: pointer;
+}
+

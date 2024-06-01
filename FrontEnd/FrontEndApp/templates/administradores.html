@@ -1,0 +1,247 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE-edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administrador</title>
+
+    <link rel="stylesheet" href="{% static 'assets/css/estilos.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/estiloss.css' %}">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://kit.fontawesome.com/41bcea2ae3.js" crossorigin="anonymous"></script>
+    <script>
+
+        document.addEventListener("DOMContentLoaded", function () {
+
+            var cedulaInput = document.getElementById("cedula");
+
+            cedulaInput.addEventListener("input", function () {
+                if (this.value.length > 10) {
+                    this.value = this.value.slice(0, 10);
+                }
+        
+                this.value = this.value.replace(/\D/g, '');
+            });    
+        });
+        function validarTelefono(input) {
+            input.value = input.value.replace(/\D/g, '');  
+        
+            if (input.value.length > 10) {
+                input.value = input.value.slice(0, 10); 
+            }
+        
+            if (input.value.length === 10) {
+                document.getElementById("errorTelefono").style.display = "none";
+            } else {
+                document.getElementById("errorTelefono").style.display = "inline";
+            }
+        }
+        
+        function corregirTelefono(input) {
+            input.value = input.value.replace(/\D/g, ''); 
+        
+            if (input.value.length === 10) {
+                document.getElementById("errorTelefono").style.display = "none";
+            } else {
+                input.value = "";  
+                document.getElementById("errorTelefono").style.display = "inline";
+            }
+        }
+        function validarTelefonoContato(input) {
+            input.value = input.value.replace(/\D/g, '');  
+        
+            if (input.value.length > 10) {
+                input.value = input.value.slice(0, 10);
+            }
+        
+            if (input.value.length === 10) {
+                document.getElementById("errorTelefonoContacto").style.display = "none";
+            } else {
+                document.getElementById("errorTelefonoContacto").style.display = "inline";
+            }
+        }
+        
+        function corregirTelefonoContacto(input) {
+            input.value = input.value.replace(/\D/g, '');  
+        
+            if (input.value.length === 10) {
+                document.getElementById("errorTelefonoContacto").style.display = "none";
+            } else {
+                input.value = "";  
+                document.getElementById("errorTelefonoContacto").style.display = "inline";
+            }
+        }
+        
+    </script>        
+</head>
+<body id="body">
+    
+    <header>
+        <div class="icon__menu">
+            <i class="fas fa-bars" id="btn_open"></i>
+        </div>
+    </header>
+
+    <div class="menu__side" id="menu_side">
+        <div class="name__page">
+            <i class="fa-solid fa-user"></i>
+            <h4>Administrador</h4>
+        </div>
+
+        <div class="options__menu">	
+
+            <a href="#" class="selected" id="registrarOption">
+                <div class="option">
+                    <i class="fa-regular fa-floppy-disk"></i>
+                    <h4>Registrar</h4>
+                </div>
+            </a>
+
+            <a href="{% url 'cerrarSesion' id %}">
+                <div class="option">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    <h4>Salir</h4>
+                </div>
+            </a>
+
+        </div>
+
+    </div>
+
+    <main>
+        <h1>Bienvenido al modulo de Administrador</h1><br>
+        {% if messages %}
+        <div class="container mt-3">
+            {% for message in messages %}
+                <script>
+                    Swal.fire({
+                        icon: '{{ message.tags }}',
+                        text: '{{ message }}',
+                        showCloseButton: true,
+                        closeButtonAriaLabel: 'Cerrar',
+                    });
+                </script>
+            {% endfor %}
+        </div>
+    {% endif %}        
+
+        <div id="registroForm" style="display: none;">
+            <h2>Registro</h2>
+            <form action="{% url 'registrarCliente' id=id %}" method="get">
+
+                <label for="nombre">Nombre:</label>
+                <input type="text" id="nombre" name="nombre" required><br>
+        
+                <label for="cedula">Cédula:</label>
+                <input type="text" id="cedula" name="cedula" required><br>
+        
+                <label for="fecha">Feacha De Nacimiento:</label>
+                <input type="date" id="fecha" name="fecha" required><br>
+
+                <label for="genero">Genero:</label>
+                <select id="rol" name="genero" required>
+                    <option value="Masculino">Masculino</option>
+                    <option value="Femenino">Femenino</option>
+                    <option value="Otro">Otro</option>
+                </select><br>
+        
+                <label for="direccion">Direccion:</label>
+                <input type="text" id="direccion" name="direccion" required><br>
+        
+                <label for="telefono">Telefono:</label>
+                <input type="text" id="telefono" name="telefono" onInput="validarTelefono(this)" onBlur="corregirTelefono(this)" required><br>
+                <span id="errorTelefono" style="color: red; display: none;">El teléfono debe tener 10 dígitos</span><br><br>
+
+        
+                <label for="correoE">correo Electronico:</label>
+                <input type="email" id="correoE" name="correoE" required><br><br>
+
+                <h2>Datos De Contacto</h2><br>             
+        
+                <label for="Nombre Contacto">Nombre de contacto:</label>
+                <input type="text" id="nombreContacto" name="nombreContacto" required><br>
+        
+                <label for="parentezcoContacto">Parentezco Del Contacto:</label>
+                <select id="parentezcoContacto" name="parentezcoContacto" required>
+                    <option value="">Selecione el parentezco...</option>
+                    <option value="Papá">Papá</option>
+                    <option value="Mamá">Mamá</option>
+                    <option value="Hermano/Hermana">Hermano/Hermana</option>
+                    <option value="Abuela/Abuelo">Abuela/Abuelo</option>
+                    <option value="Tio/Tia">Tio/Tia</option>
+                    <option value="Primo/Prima">Primo/Prima</option>
+                    <option value="Esposa/Esposo">Esposa/Esposo</option>
+                    <option value="otro">otro</option>
+                </select><br>
+
+                <label for="telefonoContacto">Telefono Del Contacto:</label>
+                <input type="text" id="telefonoContacto" name="telefonoContacto" onInput="validarTelefonoContato(this)" onBlur="corregirTelefonoContacto(this)" required><br>
+                <span id="errorTelefonoContacto" style="color: red; display: none;">El teléfono debe tener 10 dígitos</span><br><br>
+
+                <h2>Datos De Seguro</h2><br>               
+
+                <label for="nombreSeguro">Nombre De Seguro:</label>
+                <input type="text" id="nombreSeguro" name="nombreSeguro" required><br>
+
+                <label for="numeroPoliza">Numero De Poliza:</label>
+                <input type="text" id="numeroPoliza" name="numeroPoliza" required><br>
+
+                <label for="estadoPoliza">Estado De Poliza:</label>
+                <select id="rol" name="estadoPoliza" required>
+                    <option value="True">Activa</option>
+                    <option value="False">Vencida</option>
+                </select><br>
+        
+                <div style="margin-top: 10px;">
+                    <button type="submit">Registrar</button><br>
+                    <button type="button" id="cerrarForm">Cancelar</button>
+                </div>
+            </form>
+        </div>  
+    </main>
+
+    <footer>
+        <div class="container__footer">
+            <div class="box__footer">
+                <div class="logo">
+                    <img src="{% static 'assets/Images/logo-magtimus.png' %}" alt="">
+                </div>
+                <div class="terms">
+                </div>
+            </div>
+            <div class="box__footer">
+                <h2>Soluciones</h2>
+                <a href="https://www.google.com">App clínica</a>
+                <a href="#">James</a>
+                <a href="#">el</a>
+                <a href="#">crack</a>
+            </div>
+
+            <div class="box__footer">
+                <h2>Compañía</h2>
+                <a href="#">Acerca de</a>
+                <a href="#">Trabajos</a>
+                <a href="#">Procesos</a>
+                <a href="#">Servicios</a>              
+            </div>
+
+            <div class="box__footer">
+                <h2>Redes Sociales</h2>
+                <a href="#"> <i class="fab fa-facebook-square"></i> Facebook</a>
+                <a href="#"><i class="fab fa-twitter-square"></i> Twitter</a>
+                <a href="#"><i class="fab fa-linkedin"></i> Linkedin</a>
+                <a href="#"><i class="fab fa-instagram-square"></i> Instagram</a>
+            </div>
+        </div>
+
+        <div class="box__copyright">
+            <hr>
+            <p>Todos los derechos reservados por James y Michael © 2023 <b>Proyecto original</b></p>
+        </div>
+    </footer>
+
+    <script src="{% static 'assets/js/scriptAdmin.js' %}"></script>
+</body>
+</html>

@@ -1,0 +1,102 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'assets/css/stylesHistoria.css' %}">
+    <title>Historia Clínica</title>
+    <!-- Agrega aquí tus enlaces a CSS si es necesario -->
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .card {
+            border: 1px solid #d1d1d1;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+
+        .card-header {
+            background-color: #007bff;
+            color: white;
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+        }
+
+        .card-body {
+            border-bottom-left-radius: 15px;
+            border-bottom-right-radius: 15px;
+        }
+
+        .btn-regresar {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        {% if historia %}
+            {% for fecha, datos in historia.historias.items %}
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Historia Clínica</h5>
+                        <h6 class="card-subtitle mb-2">{{ fecha }}</h6>
+                    </div>
+                    <div class="card-body">
+                        <h6 class="card-subtitle mb-2 text-muted">Médico: {{ datos.medico }}</h6>
+                        <p class="card-text"><strong>Motivo Consulta:</strong> {{ datos.motivoConsulta }}</p>
+                        <p class="card-text"><strong>Sintomatología:</strong> {{ datos.sintomatologia }}</p>
+                        <p class="card-text"><strong>Diagnóstico:</strong> {{ datos.diagnostico }}</p>
+                        
+                        <div class="mt-4">
+                            <h5>Medicamentos:</h5>
+                            <ul class="list-group">
+                                {% for medicamento in datos.medicamento %}
+                                    <li class="list-group-item">{{ medicamento.nombreMedicamnto }} - Dosis: {{ medicamento.dosis }} - Duración: {{ medicamento.duracionTratamiento }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <h5>Procedimientos:</h5>
+                            <ul class="list-group">
+                                {% for procedimiento in datos.procedimiento %}
+                                    <li class="list-group-item">{{ procedimiento.nombreProcedimientos }} - Cantidad: {{ procedimiento.cantidad }} - Frecuencia: {{ procedimiento.frecuencia }} - Especialista: {{ procedimiento.especialista }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        
+                        {% if datos.idOrden %}
+                            <div class="mt-4">
+                                <h5>Ayudas Diagnósticas:</h5>
+                                <ul class="list-group">
+                                    <li class="list-group-item">{{ datos.nmbreAyuda }} - Cantidad: {{ datos.cantidad }} - Especialista: {{ datos.especialista }}</li>
+                                </ul>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+            <a href="#" class="btn btn-primary btn-regresar" onclick="regresar()">Regresar</a>
+        {% else %}
+            <p>No se encontraron registros.</p>
+        {% endif %}
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    
+    <script>
+        function regresar() {
+            window.history.back();
+        }
+    </script>
+</body>
+</html>

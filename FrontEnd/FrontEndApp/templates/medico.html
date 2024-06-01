@@ -1,0 +1,607 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE-edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medico</title>
+
+    <link rel="stylesheet" href="{% static 'assets/css/estilos.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/estiloss.css' %}">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+        <script>
+
+            document.addEventListener("DOMContentLoaded", function () {
+                var ayudasCheckbox = document.getElementById("checkboxAyudaDiagnostica");
+                var camposAyudas = document.getElementById("ayudaDiagnosticaFields");
+                var medicamentoCheckbox = document.getElementById("checkboxMedicamento");
+                var camposMedicamento = document.getElementById("medicamentoFields");
+                var procedimientoCheckbox = document.getElementById("checkboxProcedimiento");
+                var camposProcedimiento = document.getElementById("procedimientoFields");
+                var listaMedicamentos = document.getElementById("listaMedicamentos");
+                var listaProcedimientos = document.getElementById("listaProcedimientos");
+                var nombreProcedimientoInput = document.getElementById("nombreProcedimientos");
+                var especialistaProcedimientoInput = document.getElementById("especialistaProcedimiento");
+                var nombreAyudaInput = document.getElementById("nombreAyuda");
+                var especialistaAyudaInput = document.getElementById("especialista");
+                var cedulaInput = document.getElementById("cedula");
+                var cedulaInput1 = document.getElementById("cedula1");
+
+                cedulaInput.addEventListener("input", function () {
+                    if (this.value.length > 10) {
+                        this.value = this.value.slice(0, 10);
+                    }
+            
+                    this.value = this.value.replace(/\D/g, '');
+                });
+                cedulaInput1.addEventListener("input", function () {
+                    if (this.value.length > 10) {
+                        this.value = this.value.slice(0, 10);
+                    }
+            
+                    this.value = this.value.replace(/\D/g, '');
+                });
+
+                nombreAyudaInput.addEventListener("change", function () {
+                    var ayudaSeleccionada = this.value;
+                    var especialistaAsignadoAyuda = obtenerEspecialistaPorAyuda(ayudaSeleccionada);
+                    especialistaAyudaInput.value = especialistaAsignadoAyuda;
+                });
+                
+                function obtenerEspecialistaPorAyuda(ayuda) {
+                    var especialistasPorAyuda = {
+                        "Tomografía Computarizada": "Requiere especialista",
+                        "Análisis de Sangre": "No requiere especialista",
+                        "Ecografía": "Requiere especialista"
+                    };
+                
+                    return especialistasPorAyuda[ayuda] || "";
+                }
+
+
+                nombreProcedimientoInput.addEventListener("input", function () {
+                    var procedimientoSeleccionado = this.value;
+                    var especialistaAsignado = obtenerEspecialistaPorProcedimiento(procedimientoSeleccionado);
+                    especialistaProcedimientoInput.value = especialistaAsignado;
+                });
+        
+                function obtenerEspecialistaPorProcedimiento(procedimiento) {
+                    var especialistasPorProcedimiento = {
+                        "Cirugía Cardíaca": "Cardiólogo",
+                        "Endoscopia": "Gastroenterólogo",
+                        "Radioterapia": "Oncólogo",
+                        "Colonoscopia": "Gastroenterólogo",
+                        "Resonancia Magnética": "Radiólogo"
+                    };
+        
+                    return especialistasPorProcedimiento[procedimiento] || "";
+                }
+                
+                function toggleFields(checkbox, fields) {
+                    if (checkbox.checked) {
+                        fields.style.display = "block";
+                    } else {
+                        fields.style.display = "none";
+                    }
+        
+                    fields.querySelectorAll('input, textarea, select').forEach(element => {
+                        if (element.id !== "especialistaProcedimiento" && element.id !== "especialista") {
+                            element.disabled = !checkbox.checked;
+                        }
+                    });
+                    
+                }
+                function toggleCheckboxes() {
+                    ayudasCheckbox.disabled = Object.keys(medicamentosData).length > 0 || Object.keys(procedimientosData).length > 0;
+                    medicamentoCheckbox.disabled = Object.keys(ayudasDiagnosticasData).length > 0 ;
+                    procedimientoCheckbox.disabled = Object.keys(ayudasDiagnosticasData).length > 0;
+                }
+        
+                function agregarMedicamento() {
+                    var nmbreMedicamento = document.getElementById("nmbreMedicamento").value;
+                    var Dosis = document.getElementById("Dosis").value;
+                    var duracionTratamiento = document.getElementById("duracionTratamiento").value;
+                
+                    if (nmbreMedicamento && Dosis && duracionTratamiento) {
+                        var medicamentoExistente = false;
+                
+                        for (var key in medicamentosData) {
+                            if (medicamentosData.hasOwnProperty(key) && medicamentosData[key].nmbreMedicamento === nmbreMedicamento) {
+                                medicamentoExistente = true;
+                                break;
+                            }
+                        }
+                
+                        if (!medicamentoExistente) {
+                            var medicamento = {
+                                nmbreMedicamento: nmbreMedicamento,
+                                Dosis: Dosis + " mg",
+                                duracionTratamiento: duracionTratamiento + " semanas"
+                            };
+                
+                            var li = document.createElement("li");
+                            li.textContent = `Nombre: ${medicamento.nmbreMedicamento}, Dosis: ${medicamento.Dosis}, Duración: ${medicamento.duracionTratamiento}`;
+                            listaMedicamentos.appendChild(li);
+                
+                            agregarADiccionario(medicamentosData, medicamento);
+                
+                            document.getElementById("nmbreMedicamento").value = "";
+                            document.getElementById("Dosis").value = "";
+                            document.getElementById("duracionTratamiento").value = "";
+                
+                            ayudasCheckbox.disabled = true;
+                            toggleCheckboxes();
+                            camposAyudas.style.display = "none";
+                        } else {
+                            alert("Ya existe un medicamento con ese nombre en la lista.");
+                        }
+                    }
+                }                
+        
+                function agregarProcedimiento() {
+                    var nombreProcedimiento = document.getElementById("nombreProcedimientos").value;
+                    var cantidadProcedimiento = document.getElementById("cantidadProcedimiento").value;
+                    var frecuenciaProcedimiento = document.getElementById("frecuenciaProcedimiento").value;
+                    var especialistaProcedimiento = document.getElementById("especialistaProcedimiento").value;
+                
+                    if (nombreProcedimiento && cantidadProcedimiento && frecuenciaProcedimiento && especialistaProcedimiento) {
+                        var procedimientoExistente = false;
+                
+                        for (var key in procedimientosData) {
+                            if (procedimientosData.hasOwnProperty(key) && procedimientosData[key].nombreProcedimientos === nombreProcedimiento) {
+                                procedimientoExistente = true;
+                                break;
+                            }
+                        }
+                
+                        if (!procedimientoExistente) {
+                            var procedimiento = {
+                                nombreProcedimientos: nombreProcedimiento,
+                                cantidad: cantidadProcedimiento,
+                                frecuencia: frecuenciaProcedimiento,
+                                especialista: especialistaProcedimiento
+                            };
+                
+                            var li = document.createElement("li");
+                            li.textContent = `Nombre: ${procedimiento.nombreProcedimientos}, Cantidad: ${procedimiento.cantidad}, Frecuencia: ${procedimiento.frecuencia}, Especialista: ${procedimiento.especialista}`;
+                            listaProcedimientos.appendChild(li);
+                
+                            agregarAProcedimientos(procedimientosData, procedimiento);
+                
+                            document.getElementById("nombreProcedimientos").value = "";
+                            document.getElementById("cantidadProcedimiento").value = "";
+                            document.getElementById("frecuenciaProcedimiento").value = "";
+                            document.getElementById("especialistaProcedimiento").value = "";
+                
+                            ayudasCheckbox.disabled = true;
+                            toggleCheckboxes();
+                            camposAyudas.style.display = "none";
+                        } else {
+                            alert("Ya existe un procedimiento con ese nombre en la lista.");
+                        }
+                    }
+                }        
+                function agregarAyudaDiagnostica() {
+                    var nombreAyuda = document.getElementById("nombreAyuda").value;
+                    var cantidad = document.getElementById("cantidad").value;
+                    var especialista = document.getElementById("especialista").value;
+
+                    console.log(nombreAyuda)
+        
+                    if (nombreAyuda && cantidad && especialista) {
+                        var ayudaDiagnostica = {
+                            nombreAyuda: nombreAyuda,
+                            cantidad: cantidad,
+                            especialista: especialista
+                        };
+                        
+                        ayudasDiagnosticasData= ayudaDiagnostica
+                        var li = document.createElement("li");
+                        li.textContent = `Nombre: ${ayudaDiagnostica.nombreAyuda}, Cantidad: ${ayudaDiagnostica.cantidad}, Especialista: ${ayudaDiagnostica.especialista}`;
+                        listaAyudas.appendChild(li);
+                        document.getElementById("ayudasDiagnosticasData").value = JSON.stringify(ayudasDiagnosticasData);
+                        document.getElementById("nombreAyuda").value = "";
+                        document.getElementById("cantidad").value = "";
+                        document.getElementById("especialista").value = "";
+                        document.getElementById("nombreAyuda").disabled = true;
+                        document.getElementById("cantidad").disabled = true;
+                        document.getElementById("especialista").disabled = true;
+                        document.getElementById("agregarAyudaBtn").disabled = true;
+                        document.getElementById("ayudaDiagnosticaMessage").innerText = "Solo se permite ingresar una ayuda diagnóstica.";
+                        toggleCheckboxes();
+                        medicamentoCheckbox.disabled = true;
+                        ayudasCheckbox.disabled = true;
+                        camposMedicamento.style.display = "none";
+                        camposProcedimiento.style.display = "none";
+                    }
+                }
+        
+                function agregarADiccionario(diccionario, elemento) {
+                    var key = Object.keys(diccionario).length + 1;
+                    diccionario[key] = elemento;
+                    document.getElementById("medicamentosData").value = JSON.stringify(medicamentosData);
+                }
+        
+                function agregarAProcedimientos(diccionario, elemento) {
+                    var key = Object.keys(diccionario).length + 1;
+                    diccionario[key] = elemento;
+                    document.getElementById("procedimientosData").value = JSON.stringify(procedimientosData);
+                }
+        
+                ayudasCheckbox.addEventListener("change", function () {
+                    toggleFields(ayudasCheckbox, camposAyudas);
+                    toggleCheckboxes();
+                });
+        
+                medicamentoCheckbox.addEventListener("change", function () {
+                    toggleFields(medicamentoCheckbox, camposMedicamento);
+                    toggleCheckboxes();
+                });
+        
+                procedimientoCheckbox.addEventListener("change", function () {
+                    toggleFields(procedimientoCheckbox, camposProcedimiento);
+                    toggleCheckboxes();
+                });
+        
+                document.getElementById("agregarMedicamentoBtn").addEventListener("click", agregarMedicamento);
+                document.getElementById("agregarProcedimientoBtn").addEventListener("click", agregarProcedimiento);
+                document.getElementById("agregarAyudaBtn").addEventListener("click", agregarAyudaDiagnostica);
+            });
+            function validarDosis(input) {
+                input.value = input.value.replace(/[eE]/g, '');
+        
+                var valor = parseFloat(input.value);
+        
+                if (isNaN(valor) || valor < 5 || valor > 500) {
+                    document.getElementById("errorDosis").style.display = "inline";
+                } else {
+                    document.getElementById("errorDosis").style.display = "none";
+                }
+        
+                input.nextElementSibling.textContent = valor.toFixed(1) + " MG";
+            }
+        
+            function corregirDosis(input) {
+                var valor = parseFloat(input.value);
+        
+                if (isNaN(valor) || valor < 5 || valor > 500) {
+                    input.value = "";
+                    document.getElementById("errorDosis").style.display = "none";
+                    input.nextElementSibling.textContent = "5.0 MG";
+                }
+            }
+            function validarCantidadAyuda(input) {
+                input.value = input.value.replace(/[eE]/g, '');
+        
+                var valor = parseFloat(input.value);
+        
+                if (isNaN(valor) || valor < 1 || valor > 10) {
+                    document.getElementById("errorCantidadAyuda").style.display = "inline";
+                } else {
+                    document.getElementById("errorCantidadAyuda").style.display = "none";
+                }
+        
+                input.nextElementSibling.textContent = valor.toFixed(1) + " MG";
+            }
+        
+            function corregirCantidadAyuda(input) {
+                var valor = parseFloat(input.value);
+        
+                if (isNaN(valor) || valor < 1 || valor > 10) {
+                    input.value = "";
+                    document.getElementById("errorCantidadAyuda").style.display = "none";
+                    input.nextElementSibling.textContent = "";
+                }
+            }
+            function validarDuracionT(input) {
+                input.value = input.value.replace(/[eE]/g, '');
+            
+                var valor = parseFloat(input.value);
+            
+                if (isNaN(valor) || valor < 1 || valor > 48) {
+                    document.getElementById("errorDuaracionE").style.display = "inline";
+                } else {
+                    document.getElementById("errorDuaracionE").style.display = "none";
+                }
+            
+                document.getElementById("outputDuracion").textContent = valor.toFixed(1) + " SEMANAS";
+            }
+            
+            function corregirDuracionT(input) {
+                var valor = parseFloat(input.value);
+            
+                if (isNaN(valor) || valor < 1 || valor > 48) {
+                    input.value = "";
+                    document.getElementById("errorDuaracionE").style.display = "none";
+                    document.getElementById("outputDuracion").textContent = "5 SEMANAS";
+                }
+            }
+            function validarCantidadProcedimiento(input) {
+                input.value = input.value.replace(/[eE]/g, '');
+        
+                var valor = parseFloat(input.value);
+        
+                if (isNaN(valor) || valor < 1 || valor > 10) {
+                    document.getElementById("errorCantidadProcedimiento").style.display = "inline";
+                } else {
+                    document.getElementById("errorCantidadProcedimiento").style.display = "none";
+                }
+        
+                input.nextElementSibling.textContent = valor.toFixed(1) + " MG";
+            }
+        
+            function corregirCantidadProcedimiento(input) {
+                var valor = parseFloat(input.value);
+        
+                if (isNaN(valor) || valor < 1 || valor > 10) {
+                    input.value = "";
+                    document.getElementById("errorCantidadProcedimiento").style.display = "none";
+                    input.nextElementSibling.textContent = "";
+                }
+            }
+            function manejarCambioFrecuencia() {
+                var frecuenciaSelect = document.getElementById("frecuenciaProcedimiento");
+                var cantidadInput = document.getElementById("cantidadProcedimiento");
+            
+                var seleccionFrecuencia = frecuenciaSelect.value;
+            
+                if (seleccionFrecuencia === "Una vez") {
+                    cantidadInput.value = 1;
+                    cantidadInput.disabled = true;
+                } else {
+                    cantidadInput.disabled = false;
+                    cantidadInput.value = "";
+                }
+            }
+            
+            var medicamentosData = {};
+            var procedimientosData = {};
+            var ayudasDiagnosticasData =[];
+        </script>
+        
+        
+        
+        
+
+</body>
+</html>
+
+    <script src="https://kit.fontawesome.com/41bcea2ae3.js" crossorigin="anonymous"></script>
+</head>
+<body id="body">
+    
+    <header>
+        <div class="icon__menu">
+            <i class="fas fa-bars" id="btn_open"></i>
+        </div>
+    </header>
+
+    <div class="menu__side" id="menu_side">
+        <div class="name__page">
+            <i class="fa-solid fa-user"></i>
+            <h4>Medico</h4>
+        </div>
+
+        <div class="options__menu">	
+
+            <a href="#" class="selected" id="registrarOption">
+                <div class="option">
+                    <i class="fa-regular fa-floppy-disk"></i>
+                    <h4>Registrar</h4>
+                </div>
+            </a>
+
+            <a href="#" class="selected" id="consultarOption">
+                <div class="option">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <h4>Consultar</h4>
+                </div>
+            </a>
+
+            <a href="{% url 'cerrarSesion' id %}">
+                <div class="option">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    <h4>Salir</h4>
+                </div>
+            </a>
+
+        </div>
+
+    </div>
+
+    <main>
+        <h1>Bienvenido Al Modulo Del Medico</h1><br>
+
+        {% if messages %}
+        <div class="container mt-3">
+            {% for message in messages %}
+                <script>
+                    Swal.fire({
+                        icon: '{{ message.tags }}',
+                        text: '{{ message }}',
+                        showCloseButton: true,
+                        closeButtonAriaLabel: 'Cerrar',
+                    });
+                </script>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+        <div id="registroForm" style="display: none;">
+            <form class="formulario" method="get" action="/registrarHistoria/{{ id }}/" id="historiaForm">
+                {% csrf_token %}
+                <h2>Registro Historia Clínica</h2>
+                <label for="cedula">Cédula del Paciente:</label>
+                <input type="text" id="cedula" name="cedula" maxlength="10">
+        
+                <label for="motivoConsulta">Motivo de Consulta:</label>
+                <textarea id="motivoConsulta" name="motivoConsulta" required></textarea><br>
+        
+                <label for="sintomatologia">Sintomatología:</label>
+                <textarea id="sintomatologia" name="sintomatologia" required></textarea><br>
+        
+                <label for="diagnostico">Diagnóstico:</label>
+                <textarea id="diagnostico" name="diagnostico" required></textarea><br><br>
+        
+                <h2>Ayuda Diagnóstica</h2><br>
+                <input type="checkbox" id="checkboxAyudaDiagnostica" name="checkboxAyudaDiagnostica">
+                <div id="ayudaDiagnosticaFields" style="display: none;">
+                    <select id="nombreAyuda" name="nombreAyuda" disabled>
+                        <option value="" >Seleccionar ayuda diagnóstica...</option>
+                        <option value="Tomografía Computarizada">Tomografía Computarizada</option>
+                        <option value="Análisis de Sangre">Análisis de Sangre</option>
+                        <option value="Ecografía">Ecografía</option>
+                    </select><br>
+        
+                    <label for="cantidad">Cantidad de la Ayuda Diagnóstica:</label>
+                    <input type="number" value="5" onInput="validarCantidadAyuda(this)" onBlur="corregirCantidadAyuda(this)" id="cantidad" name="cantidad" disabled><br>
+                    <span id="errorCantidadAyuda" style="color: red; display:none;"> La cantidad debe estar entre 1 y 10</span>
+
+                    <label for="especialista">Especialista de la Ayuda Diagnóstica:</label>
+                    <input type="text" id="especialista" name="especialista" disabled><br>
+
+                    <button type="button" id="agregarAyudaBtn">Agregar Ayuda Diagnóstica</button>
+                    <ul id="listaAyudas"></ul>
+                </div><br>
+        
+                <h2>Medicamentos</h2><br>
+                <input type="checkbox" id="checkboxMedicamento" name="checkboxMedicamento">
+                <div id="medicamentoFields" style="display: none;">
+                    <label for="nmbreMedicamento">Nombre del Medicamento:</label>
+                    <select id="nmbreMedicamento" name="nmbreMedicamento">
+                        <option value="" >Seleccionar medicamento...</option>
+                        <option value="Ibuprofeno">Ibuprofeno</option>
+                        <option value="Paracetamol">Paracetamol</option>
+                        <option value="Amoxicilina">Amoxicilina</option>
+                        <option value="Omeprazol">Omeprazol</option>
+                        <option value="Acetaminofen">Acetaminofen</option>
+                        <option value="Sevedol">Sevedol</option>
+                        <option value="Aspirina">Aspirina</option>
+                        <option value="Dolex">Dolex</option>
+                        <option value="Morir">Morir</option>
+                        <option value="Morfina">Morfina</option>
+                    </select><br>
+                    
+        
+                    <label for="Dosis">Dosis del Medicamento:</label>
+                    <input type="number" value="" onInput="validarDosis(this)" onBlur="corregirDosis(this)" id="Dosis" name="Dosis" disabled>
+                    <output>25.0 MG</output><br>
+                    <span id="errorDosis" style="color: red; display: none;">La dosis debe estar entre 5 y 500</span><br>
+
+
+        
+                    <label for="duracionTratamiento">Duración del Tratamiento:</label>
+                    <input type="number" value="" onInput="validarDuracionT(this)" onBlur="corregirDuracionT(this)" id="duracionTratamiento" name="duracionTratamiento" disabled><br>
+                    <output id="outputDuracion">5 SEMANAS </output><br>
+                    <span id="errorDuaracionE" style="color: red; display:none;"> La duración debe estar entre 1 y 48 semanas</span>
+        
+                   <button type="button" id="agregarMedicamentoBtn">Agregar Medicamento</button>
+                   <ul id="listaMedicamentos"></ul>
+                </div>
+        
+                <h2>Procedimiento</h2><br>
+                <input type="checkbox" id="checkboxProcedimiento" name="checkboxProcedimiento">
+                <div id="procedimientoFields" style="display: none;">
+                    <label for="nombreProcedimientos">Nombre del Procedimiento:</label>
+                    <select id="nombreProcedimientos" name="nombreProcedimientos" >
+                        <option value="">Seleccionar procedimiento...</option>
+                        <option value="Cirugía Cardíaca">Cirugía Cardíaca</option>
+                        <option value="Endoscopia">Endoscopia</option>
+                        <option value="Radioterapia">Radioterapia</option>
+                        <option value="Colonoscopia">Colonoscopia</option>
+                        <option value="Resonancia Magnética">Resonancia Magnética</option>
+                    </select><br>
+        
+                   <label for="cantidadProcedimiento">Cantidad del Procedimiento:</label>
+                   <input type="number" value="" onInput="validarCantidadProcedimiento(this)" onBlur="corregirCantidadProcedimiento(this)" id="cantidadProcedimiento" name="cantidadProcedimiento" disabled><br>
+                   <span id="errorCantidadProcedimiento" style="color: red; display:none;"> La cantidad debe estar entre 1 y 10</span>
+        
+                   <label for="frecuenciaProcedimiento">Frecuencia del Procedimiento:</label>
+                   <select id="frecuenciaProcedimiento" name= "frecuenciaProcedimiento" onchange="manejarCambioFrecuencia()">
+                        <option value="">Seleccionar frecuencia:</option>
+                        <option value="Una vez">Una vez</option>
+                        <option value="Cada semana">Cada semana</option>
+                        <option value="Cada mes">Cada mes</option>
+                        <option value="Cada seis meses">Cada seis meses</option>
+                        <option value="Cada año">Cada año</option>
+                        
+                   </select><br>
+
+        
+                   <label for="especialistaProcedimiento">Especialista del Procedimiento:</label>
+                   <input type="text" id="especialistaProcedimiento" name="especialistaProcedimiento" disabled><br>
+        
+                   <button type="button" id="agregarProcedimientoBtn">Agregar Procedimiento</button>
+                   <ul id="listaProcedimientos"></ul>
+                </div>
+                <div style="margin-top: 10px;">
+                    <button type="submit">Registrar</button><br>
+                    <button type="button" id="cerrarForm">Cancelar</button>
+                </div>
+                <input type="hidden" id="medicamentosData" name="medicamentosData">
+                <input type="hidden" id="procedimientosData" name="procedimientosData">
+                <input type="hidden" id="ayudasDiagnosticasData" name="ayudasDiagnosticasData">
+            </form>
+        </div>        
+        <div id="consultarForm" style="display: none;">
+            <form class="formulario" method="get" action="/consultarHistoria/{{ id }}/" id="historiaForm">
+            <h2>Consulta Historia Clinica</h2>
+        
+                <label for="cedula">Cédula:</label>
+                <input type="text" id="cedula1" name="cedula" required><br>
+                <label for="fecha">Fecha:</label>
+                <input type="date"id="fecha" name="fecha" required>
+        
+                <div style="margin-top: 10px;">
+                    <button type="submit", id="buscarBtn">Buscar</button><br>
+                    <button type="button" id="cerrarForm">Cancelar</button>
+                </div>
+            </form>
+        </div>  
+    </main>
+
+    <footer>
+        <div class="container__footer">
+            <div class="box__footer">
+                <div class="logo">
+                    <img src="{% static 'assets/Images/logo-magtimus.png' %}" alt="">
+                </div>
+                <div class="terms">
+                </div>
+            </div>
+            <div class="box__footer">
+                <h2>Soluciones</h2>
+                <a href="https://www.google.com">App clínica</a>
+                <a href="#">James</a>
+                <a href="#">el</a>
+                <a href="#">crack</a>
+            </div>
+
+            <div class="box__footer">
+                <h2>Compañía</h2>
+                <a href="#">Acerca de</a>
+                <a href="#">Trabajos</a>
+                <a href="#">Procesos</a>
+                <a href="#">Servicios</a>              
+            </div>
+
+            <div class="box__footer">
+                <h2>Redes Sociales</h2>
+                <a href="#"> <i class="fab fa-facebook-square"></i> Facebook</a>
+                <a href="#"><i class="fab fa-twitter-square"></i> Twitter</a>
+                <a href="#"><i class="fab fa-linkedin"></i> Linkedin</a>
+                <a href="#"><i class="fab fa-instagram-square"></i> Instagram</a>
+            </div>
+        </div>
+
+        <div class="box__copyright">
+            <hr>
+            <p>Todos los derechos reservados por James y Michael © 2023 <b>Proyecto original</b></p>
+        </div>
+    </footer>
+
+    <script src="{% static 'assets/js/scriptMedico.js' %}"></script>
+</body>
+</html>

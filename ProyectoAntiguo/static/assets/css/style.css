@@ -1,0 +1,87 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body{
+    font-family: 'Exo 2', sans-serif;
+}
+.pie{
+    background: #d7d7d7;
+}
+
+
+span{
+    font-size: 23px;
+}
+.fb{
+    background: rgb(94, 255, 0);
+    padding: 8px;
+    border-radius: 50px;
+    color: white;
+}
+.tw{
+    background: rgb(0, 140, 255);
+    padding: 8px;
+    border-radius: 50px;
+    color: white;
+}
+.in{
+    background: rgb(255, 0, 179);
+    padding: 8px;
+    border-radius: 50px;
+    color: white;
+}
+.li{
+    background: rgb(14, 226, 21);
+    padding: 8px;
+    border-radius: 50px;
+    color: white;
+}
+.yt{
+    background: rgb(255, 0, 0);
+    padding: 8px;
+    border-radius: 50px;
+    color: white;
+}
+.header{
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    align-items: center;
+}
+.logotipo{
+    font-size: 18px;
+    color: rgb(255, 255, 255);
+}
+.section{
+    display: flex;
+    justify-content: space-evenly;
+    gap: 40px;
+}
+.section div{
+    display: flex;
+    flex-direction: column;
+}
+div h2{
+    color: rgb(80, 81, 80);
+    padding: 10px 0;
+}
+a{
+    color: rgba(255, 255, 255, 0.527);
+    text-decoration: none;
+    padding: 5px;
+}
+form{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.derechos{
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    background: #1c4928;
+    color: white;
+}

@@ -1,0 +1,34 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Nunito', sans-serif;
+    text-decoration: none;
+}
+
+:root {
+    --color-esqueleto: #EFF3F5;
+}
+
+body {
+    padding: 20px; /* Agregado para dar espacio al contenido */
+}
+
+header {
+    width: 100%;
+    height: 60px;
+    background: var(--color-esqueleto);
+}
+
+.container {
+    max-width: 800px; /* Ajusta según sea necesario */
+    margin: auto;
+    margin-top: 20px;
+}
+
+.historia-item {
+    margin-bottom: 20px;
+}
+
+/* Otros estilos específicos para tu contenido de historia clínica */
+/* Agrega más estilos según sea necesario */
